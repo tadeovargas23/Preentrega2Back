@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos en Tiempo Real</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Función para agregar producto
+        function agregarProducto(event) {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            const nombre = document.getElementById('nombre').value;
+            const precio = document.getElementById('precio').value;
+            const descripcion = document.getElementById('descripcion').value;
+
+            // Emitir el evento para agregar un producto
+            socket.emit('agregarProducto', { nombre, precio, descripcion });
+
+            // Limpiar los campos del formulario
+            document.getElementById('nombre').value = '';
+            document.getElementById('precio').value = '';
+            document.getElementById('descripcion').value = '';
+        }
+
+        // Función para eliminar producto
+        function eliminarProducto(id) {
+            socket.emit('eliminarProducto', id);
+        }
+
+        socket.on('productosActualizados', (productos) => {
+            const lista = document.getElementById('listaProductos');
+            lista.innerHTML = ''; // Limpiar la lista existente
+            productos.forEach(producto => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${producto.nombre} - $${producto.precio} <br>
+                    <small>${producto.descripcion}</small>
+                    <button onclick="eliminarProducto('${producto.id}')">Eliminar</button>
+                `;
+                lista.appendChild(li);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Productos en Tiempo Real</h1>
+    <ul id="listaProductos">
+        {{#each productos}}
+            <li>
+                {{this.nombre}} - ${{this.precio}} <br>
+                <small>{{this.descripcion}}</small>
+                <button onclick="eliminarProducto('{{this.id}}')">Eliminar</button>
+            </li>
+        {{/each}}
+    </ul>
+
+    <h2>Agregar Producto</h2>
+    <form onsubmit="agregarProducto(event)">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="number" id="precio" placeholder="Precio" required>
+        <input type="text" id="descripcion" placeholder="Descripción" required>
+        <button type="submit">Agregar Producto</button>
+    </form>
+</body>
+</html>

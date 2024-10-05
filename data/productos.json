@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nombre": "Remera Oversize",
+    "precio": 100,
+    "descripcion": "Descripción del Producto 1"
+  },
+  {
+    "id": 2,
+    "nombre": "Pantalon Baggy",
+    "precio": 200,
+    "descripcion": "Descripción del Producto 2"
+  }
+]
